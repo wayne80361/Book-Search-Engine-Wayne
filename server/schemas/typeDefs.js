@@ -13,7 +13,7 @@ type Book {
         bookId: String!
         image: String
         link: String
-        title: Sting!
+        title: String!
 }
 
 input saveBook {
@@ -22,7 +22,7 @@ input saveBook {
     bookId: String!
     image: String
     link: String
-    title: Sting!
+    title: String!
 }
 
 type Auth {
@@ -39,8 +39,6 @@ type Mutation {
     login(username: String, email: String, password: String! ): Auth
     saveBook(User: ID!, input: saveBook!): User
     removeBook(User: ID!, bookId: String!): User
-}
-
 }
 `;
 
