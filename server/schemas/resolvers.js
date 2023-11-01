@@ -14,11 +14,11 @@ const resolvers = {
       const token = signToken(user);
       return { token, user };
     },
-    login: async (parent, { username, email, password }) => {
-      const user = await User.findOne({ $or: [{ username }, { email }] });
+    login: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
       const correctPw = await user.isCorrectPassword(password);
       if (!correctPw) {
-        throw AuthenticationError("Incorrect username or password");
+        throw new AuthenticationError("Incorrect username or password");
       }
       const token = signToken(user);
       return { token, user };
