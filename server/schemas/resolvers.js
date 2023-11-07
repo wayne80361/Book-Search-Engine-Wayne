@@ -1,25 +1,37 @@
 const { User } = require("../models");
-const { AuthenticationError, signToken } = require("../utils/auth");
+const { signToken, AuthenticationError } = require("../utils/auth");
 
 const resolvers = {
   Query: {
-    me: async (parent, args) => {
-      return await User.findById(args.id).populate("savedBooks");
+    me: async (parent, args, context) => {
+      if (context.user) {
+        const userData = await User.findOne({ _id: context.user._id }).select(
+          "-__v -password"
+        );
+
+        return userData;
+      }
+
+      throw new AuthenticationError("Not logged in");
     },
   },
   Mutation: {
     addUser: async (parent, { username, email, password }) => {
       const user = await User.create({ username, email, password });
-
       const token = signToken(user);
       return { token, user };
     },
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
-      const correctPw = await user.isCorrectPassword(password);
-      if (!correctPw) {
-        throw new AuthenticationError("Incorrect username or password");
+      if (!user) {
+        throw new AuthenticationError("Incorrect login credentials!");
       }
+
+      const correctPW = await user.isCorrectPassword(password);
+      if (!correctPW) {
+        throw new AuthenticationError("Incorrect login credentials!");
+      }
+
       const token = signToken(user);
       return { token, user };
     },
@@ -48,3 +60,5 @@ const resolvers = {
     },
   },
 };
+
+module.exports = resolvers;
