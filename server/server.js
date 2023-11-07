@@ -25,7 +25,7 @@ const startApolloServer = async () => {
   await server.start();
 
   // Configure Express to parse incoming URL-encoded and JSON data.
-  app.use(express.urlencoded({ extended: true }));
+  app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
 
   //middleware for graphql
